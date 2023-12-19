@@ -3,7 +3,7 @@ import json
 from typing import Optional, List, Union
 import uuid
 
-from ChromaDB import Collection
+from chromadb import Collection
 
 
 class Note:
@@ -19,7 +19,9 @@ class Note:
         self.title = title
         self.text = text
         self.parent_note_id = parent_note.id if parent_note else None
-        self.related_note_ids = [related_note.id for related_note in related_notes]
+        self.related_note_ids = (
+            [related_note.id for related_note in related_notes] if related_notes else []
+        )
         self.date_created = datetime.datetime.now()
         self.type = None
         self.tags = tags if tags else []
@@ -56,7 +58,7 @@ class Note:
             "title": self.title,
             "text": self.text,
             "parent_note_id": str(self.parent_note_id) if self.parent_note_id else None,
-            "related_notes_ids": [str(note_id) for note_id in self.related_notes_ids],
+            "related_notes_ids": [str(note_id) for note_id in self.related_note_ids],
             "date_created": self.date_created.isoformat(),
             "tags": self.tags,
             "type": self.type,
