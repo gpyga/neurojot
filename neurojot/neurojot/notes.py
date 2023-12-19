@@ -3,7 +3,7 @@ import json
 from typing import Optional, List, Union
 import uuid
 
-from chromadb import Collection
+from chromadb import Collection as ChromaCollection
 
 
 class Note:
@@ -122,7 +122,7 @@ class Note:
 
         return note
 
-    def save(self, collection: Collection):
+    def save(self, collection: ChromaCollection):
         note_data = self.to_json()
         metadata = {
             "type": note_data["type"],
@@ -139,7 +139,7 @@ class Note:
         )
 
     @classmethod
-    def get(cls, collection: Collection, note_id: str):
+    def get(cls, collection: ChromaCollection, note_id: str):
         result = collection.get(ids=note_id)
         if result:
             note_data = result[0]
