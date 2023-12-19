@@ -60,7 +60,7 @@ class Note:
         if tag in self.tags:
             self.tags.remove(tag)
 
-    def serialize(self):
+    def to_json(self):
         note_data = {
             "id": str(self.id),
             "title": self.title,
@@ -75,10 +75,13 @@ class Note:
         if self.type == "literature":
             note_data["reference_id"] = self.reference.id
 
-        return json.dumps(note_data)
+        return note_data
 
-    @staticmethod
-    def deserialize(data):
+    def serialize(self):
+        return json.dumps(self.to_json())
+
+    @classmethod
+    def deserialize(cls, data):
         note_data = json.loads(data)
         if note_data["type"] == "fleeting":
             note = FleetingNote(
@@ -120,23 +123,23 @@ class Note:
         return note
 
     def save(self, collection: Collection):
-        note_data = json.loads(self.serialize())
+        note_data = self.to_json()
         metadata = {
-            "type": self.type,
-            "tags": self.tags,
-            "date_created": self.date_created.isoformat(),
+            "type": note_data["type"],
+            "tags": note_data["tags"],
+            "date_created": note_data["date_created"],
         }
         if self.type == "literature":
-            metadata["reference_id"] = self.reference.id
+            metadata["reference_id"] = note_data.get("reference_id")
 
         collection.upsert(
             ids=str(self.id),
-            documents=note_data,
+            documents=json.dumps(note_data),
             metadatas=metadata,
         )
 
-    @staticmethod
-    def get(collection: Collection, note_id: str):
+    @classmethod
+    def get(cls, collection: Collection, note_id: str):
         result = collection.get(ids=note_id)
         if result:
             note_data = result[0]
@@ -262,6 +265,6 @@ class DocumentReference:
             LiteratureNote(title=title, text=text, reference=self, **kwargs)
         )
 
-    @staticmethod
-    def get(reference_id):
+    @classmethod
+    def get(cls, reference_id):
         return None
