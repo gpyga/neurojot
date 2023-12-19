@@ -18,8 +18,8 @@ class Note:
         self._id = uuid.uuid4()
         self.title = title
         self.text = text
-        self.parent_note_id = parent_note.id if parent_note else None
-        self.related_note_ids = (
+        self._parent_note_id = parent_note.id if parent_note else None
+        self._related_note_ids = (
             [related_note.id for related_note in related_notes] if related_notes else []
         )
         self.date_created = datetime.datetime.now()
@@ -30,6 +30,14 @@ class Note:
     @property
     def id(self):
         return self._id.hex
+
+    @property
+    def parent_note(self):
+        return self.get(self._parent_note_id)
+
+    @property
+    def related_notes(self):
+        return [self.get(note_id) for note_id in self._related_note_ids]
 
     def add_parent(self, parent_note: "Note"):
         if self.parent_note:
