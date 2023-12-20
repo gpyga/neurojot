@@ -95,7 +95,7 @@ class Note:
             note = LiteratureNote(
                 title=note_data["title"],
                 text=note_data["text"],
-                reference=DocumentReference.get(note_data["reference_id"]),
+                reference=LiteraturetReference.get(note_data["reference_id"]),
                 tags=note_data["tags"],
             )
         elif note_data["type"] == "permanent":
@@ -186,7 +186,7 @@ class LiteratureNote(Note):
         self,
         title: str,
         text: str,
-        reference: "DocumentReference",
+        reference: "LiteraturetReference",
         parent_note: Optional["Note"] = None,
         related_notes: Optional[List["Note"]] = None,
         tags: Optional[List[str]] = None,
@@ -221,7 +221,7 @@ class PermanentNote(Note):
         self.type = "permanent"
 
 
-class DocumentReference:
+class LiteraturetReference:
     def __init__(
         self,
         type: str,
