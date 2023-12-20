@@ -60,13 +60,15 @@ class Note:
         if tag in self.tags:
             self.tags.remove(tag)
 
-    def to_json(self):
+    def to_dict(self):
         note_data = {
             "id": str(self.id),
             "title": self.title,
             "text": self.text,
-            "parent_note_id": str(self.parent_note_id) if self.parent_note_id else None,
-            "related_notes_ids": [str(note_id) for note_id in self.related_note_ids],
+            "parent_note_id": str(self._parent_note_id)
+            if self._parent_note_id
+            else None,
+            "related_notes_ids": [str(note_id) for note_id in self._related_note_ids],
             "date_created": self.date_created.isoformat(),
             "tags": self.tags,
             "type": self.type,
@@ -78,7 +80,7 @@ class Note:
         return note_data
 
     def serialize(self):
-        return json.dumps(self.to_json())
+        return json.dumps(self.to_dict())
 
     @classmethod
     def deserialize(cls, data):
@@ -123,7 +125,7 @@ class Note:
         return note
 
     def save(self, collection: ChromaCollection):
-        note_data = self.to_json()
+        note_data = self.to_dict()
         metadata = {
             "type": note_data["type"],
             "tags": note_data["tags"],
